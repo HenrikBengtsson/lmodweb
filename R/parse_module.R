@@ -8,6 +8,11 @@
 #' @importFrom R.utils cstr
 #' @export
 parse_module <- function(m) {
+  ## Always sort under the 'C' locale
+  old_collate <- Sys.getlocale("LC_COLLATE")
+  on.exit(Sys.setlocale("LC_COLLATE", old_collate))
+  Sys.setlocale("LC_COLLATE", "C")
+    
   m <- lapply(m, FUN = trim)
 
   ## Trim versions

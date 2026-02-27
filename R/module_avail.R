@@ -21,6 +21,11 @@ module_avail <- local({
   .cache <- list()
   
   function(info, distros = character(0L), onMissingPath = getOption("onMissingPath", c("okay", "error", "warning", "ignore")), force = FALSE) {
+    ## Always sort under the 'C' locale
+    old_collate <- Sys.getlocale("LC_COLLATE")
+    on.exit(Sys.setlocale("LC_COLLATE", old_collate))
+    Sys.setlocale("LC_COLLATE", "C")
+    
     stopifnot(is.list(info), "module_path" %in% names(info))
     onMissingPath <- match.arg(onMissingPath)
     stopifnot(length(force) == 1L, is.logical(force), !is.na(force))
@@ -49,7 +54,7 @@ module_avail <- local({
         return(NULL)
       }
     }
-
+    
     json <- spider(module_path, force = force)
     x <- fromJSON(json)
 
