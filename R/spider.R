@@ -20,7 +20,9 @@ spider <- function(module_path, force = FALSE) {
   pathname <- file.path("lmod_data", sprintf("%s.json", module_path))
   if (debug) message("- pathname: ", pathname)
   if (force || !file_test("-f", pathname)) {
-    stopifnot(file_test("-d", module_path))
+    if (!file_test("-d", module_path)) {
+      stop("No such module path: ", sQuote(module_path))
+    }
     path <- dirname(pathname)
     if (force && file_test("-d", path)) unlink(path, recursive = TRUE)
     dir.create(path, recursive = TRUE)
