@@ -8,6 +8,12 @@
 #' @return
 #' A non-parsed, JSON string.
 #'
+#' @section Cache folder:
+#' The spider results are cached to `<datapath>/<module_path>.json`, where
+#' `<datapath>` is given by R option `lmodweb.datapath`, which defaults to
+#' `./lmod_data`. When the package is loaded, this option is initiated from
+#' environment variable `R_LMODWEB_DATAPATH`, if set.
+#'
 #' @importFrom utils file_test
 #' @export
 spider <- function(module_path, force = FALSE) {
@@ -17,7 +23,8 @@ spider <- function(module_path, force = FALSE) {
   if (debug) message(sprintf("spider('%s') ...", module_path))
 
   ## Already on file?
-  pathname <- file.path("lmod_data", sprintf("%s.json", module_path))
+  datapath <- getOption("lmodweb.datapath", "./lmod_data")
+  pathname <- file.path(datapath, sprintf("%s.json", module_path))
   if (debug) message("- pathname: ", pathname)
   if (force || !file_test("-f", pathname)) {
     if (!file_test("-d", module_path)) {

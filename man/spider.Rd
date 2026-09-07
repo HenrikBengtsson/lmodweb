@@ -18,3 +18,11 @@ A non-parsed, JSON string.
 \description{
 Module Spider on a Module Path
 }
+\section{Cache folder}{
+
+The spider results are cached to \verb{<datapath>/<module_path>.json}, where
+\verb{<datapath>} is given by R option \code{lmodweb.datapath}, which defaults to
+\code{./lmod_data}. When the package is loaded, this option is initiated from
+environment variable \code{R_LMODWEB_DATAPATH}, if set.
+}
+

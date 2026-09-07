@@ -8,10 +8,14 @@ export(module_path)
 export(parse_module)
 export(repos_buttons)
 export(spider)
-importFrom(R.utils,cstr)
-importFrom(R.utils,mstr)
+importFrom(R.utils,
+  cstr,
+  mstr
+)
 importFrom(commonmark,markdown_html)
-importFrom(gtools,mixedorder)
-importFrom(gtools,mixedsort)
+importFrom(gtools,
+  mixedorder,
+  mixedsort
+)
 importFrom(jsonlite,fromJSON)
 importFrom(utils,file_test)
