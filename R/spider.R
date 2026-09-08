@@ -6,13 +6,17 @@
 #' cached results are returned.
 #'
 #' @return
-#' A non-parsed, JSON string.
+#' A non-parsed, JSON string, in the canonical form produced by
+#' [canonicalize_json()] (sorted keys, sorted set-like arrays,
+#' pretty-printed).
 #'
 #' @section Cache folder:
 #' The spider results are cached to `<datapath>/<module_path>.json`, where
 #' `<datapath>` is given by R option `lmodweb.datapath`, which defaults to
 #' `./lmod_data`. When the package is loaded, this option is initiated from
-#' environment variable `R_LMODWEB_DATAPATH`, if set.
+#' environment variable `R_LMODWEB_DATAPATH`, if set. The cache file is
+#' canonicalized before it is written, so that re-scanning an unchanged
+#' module tree reproduces it byte for byte.
 #'
 #' @importFrom utils file_test
 #' @export
@@ -63,16 +67,21 @@ spider <- function(module_path, force = FALSE) {
     if (debug) message(" - spider result: ", res)
     stopifnot(file_test("-f", pathname_t))
 
-    ## We need to update output file to not include any temporary paths,
-    ## but the original ones
+    json <- readChar(pathname_t, nchars = file.size(pathname_t))
+    file.remove(pathname_t)
+
+    ## Replace any temporary scan path with the original one
     if (scan_path != module_path) {
-      json <- readChar(pathname_t, nchars = file.size(pathname_t))
       esc <- function(x) gsub("/", "\\/", fixed = TRUE, x)
       json <- gsub(esc(scan_path), esc(module_path), fixed = TRUE, json)
-      cat(json, file = pathname_t)
     }
-    file.copy(pathname_t, pathname, overwrite = TRUE)
-    file.remove(pathname_t)
+
+    ## 'spider' emits object keys, and the set-like arrays, in hash order,
+    ## so an unchanged module tree yields a different file every scan.
+    ## Canonicalize before caching to make the file deterministic (and
+    ## readable).
+    json <- canonicalize_json(json)
+    cat(json, file = pathname)
   }
 
   json <- readChar(pathname, nchars = file.size(pathname))

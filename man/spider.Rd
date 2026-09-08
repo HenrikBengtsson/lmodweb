@@ -13,7 +13,9 @@ spider(module_path, force = FALSE)
 cached results are returned.}
 }
 \value{
-A non-parsed, JSON string.
+A non-parsed, JSON string, in the canonical form produced by
+\code{\link[=canonicalize_json]{canonicalize_json()}} (sorted keys, sorted set-like arrays,
+pretty-printed).
 }
 \description{
 Module Spider on a Module Path
@@ -23,6 +25,8 @@ Module Spider on a Module Path
 The spider results are cached to \verb{<datapath>/<module_path>.json}, where
 \verb{<datapath>} is given by R option \code{lmodweb.datapath}, which defaults to
 \code{./lmod_data}. When the package is loaded, this option is initiated from
-environment variable \code{R_LMODWEB_DATAPATH}, if set.
+environment variable \code{R_LMODWEB_DATAPATH}, if set. The cache file is
+canonicalized before it is written, so that re-scanning an unchanged
+module tree reproduces it byte for byte.
 }
 
